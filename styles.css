@@ -3,6 +3,12 @@
 body {
     background: #643a7a;
 }
+.week{
+    display:flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    flex-grow: 5;
+}
 
 .frame {
     position: absolute;

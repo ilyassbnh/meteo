@@ -15,21 +15,52 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
     integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
     crossorigin="anonymous"></script>
+    <script src="scripts.js"></script>
   <title>meteo</title>
 </head>
 
-<body>
+<body onload="defaultScreen()">
   <nav class="navbar bg-body-tertiary">
     <div class="container-fluid">
       <a class="navbar-brand">Navbar</a>
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      <form class="d-flex" role="search" onclick="Getinfo()">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="City" id="cityInput">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
     </div>
   </nav>
+  <table class="preview">
+    <tbody>
+        <tr>
+            <td id="day1"></td>
+            <td id="day1Min"></td>
+            <td id="day1Max"></td>
+        </tr>
+        <tr>
+            <td id="day2"></td>
+            <td id="day2Min"></td>
+            <td id="day2Max"></td>
+        </tr>
+        <tr>
+            <td id="day3"></td>
+            <td id="day3Min"></td>
+            <td id="day3Max"></td>
+        </tr>
+        <tr>
+            <td id="day4"></td>
+            <td id="day4Min"></td>
+            <td id="day4Max"></td>
+        </tr>
+        <tr>
+            <td id="day5"></td>
+            <td id="day5Min"></td>
+            <td id="day5Max"></td>
+        </tr>
+    </tbody>
+</table>
 
   <div class="frame">
+    <h2 id="cityName">--London--</h2>
     <div class="moon">
       <div class="moon-crater1"></div>
       <div class="moon-crater2"></div>
@@ -99,8 +130,7 @@
     <div class="drop-small-9"></div>
     <div class="drop-small-10"></div>
   </div>
-
-
+  
 
 </body>
 
