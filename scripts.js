@@ -1,51 +1,133 @@
-function GetInfo() {
-    const newName = document.getElementById("cityInput").value;
-    const cityName = document.getElementById("cityName");
-    cityName.innerHTML = "--" + newName + "--";
+window.addEventListener("DOMContentLoaded", () => {
+  const apiKey = "a987af9b8821469fce7c51e760858a2d"; // Replace "YOUR_API_KEY" with your OpenWeatherMap API key
 
-    fetch("https://api.openweathermap.org/data/2.5/forecast?q=" + newName + "&appid=a987af9b8821469fce7c51e760858a2d")
-        .then(response => response.json())
-        .then(data => {
-    for (let i = 0; i < 5; i++) {
-        document.getElementById("day" + (i + 1)).innerHTML = weekday[Checkday(i)];
-        document.getElementById("day" + (i + 1) + "Min").innerHTML = "Min:" + Number(data.list[i].main.temp_min - 273.15).toFixed(1) + "°";
-        document.getElementById("day" + (i + 1) + "Max").innerHTML = "Max:" + Number(data.list[i].main.temp_max - 273.15).toFixed(1) + "°";
-    }
-    for (let i = 0; i < 5; i++) {
-        document.getElementById("img" + (i + 1)).src = "https://openweathermap.org/img/wn/" + data.list[i].weather[0].icon + ".png";
-    }
-})
+  const cityInput = document.getElementById("cityInput");
+  const cityName = document.getElementById("cityName");
+  const temperature = document.querySelector(".temperature span");
+  const forecastList = document.querySelector(".forecast");
 
-        .then(data => {
-            for (let i = 0; i < 5; i++) {
-                document.getElementById("day" + (i + 1) + "Min").innerHTML = "Min:" + Number(data.list[i].main.temp_min - 273.15).toFixed(1) + "°";
-            }
-            for (let i = 0; i < 5; i++) {
-                document.getElementById("day" + (i + 1) + "Max").innerHTML = "Max:" + Number(data.list[i].main.temp_max - 273.15).toFixed(1) + "°";
-            }
-            for (let i = 0; i < 5; i++) {
-                document.getElementById("img" + (i + 1)).src = "https://openweathermap.org/img/wn/" + data.list[i].weather[0].icon + ".png";
-            }
-        })
-        .catch(err => alert("something went wrong"));
-}
+  // Get weather information for user's current location
+  getLocation();
 
-function defaultScreen() {
-    document.getElementById("cityInput").defaultValue = "London";
-    GetInfo();
-}
+  // Event listener for input change
+  cityInput.addEventListener("change", () => {
+    const cityNameValue = cityInput.value.trim();
+    fetchWeather(cityNameValue);
+  });
 
-const d = new Date();
-const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  // Event listener for button click to get user's location
+  const getLocationBtn = document.getElementById("getLocationBtn");
+  getLocationBtn.addEventListener("click", getLocation);
 
-function Checkday(day) {
-    if (day + d.getDay() > 6) {
-        return day + d.getDay() - 7;
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        fetchWeatherByCoords(latitude, longitude);
+      }, (error) => {
+        console.error("Error getting user's location:", error);
+      });
     } else {
-        return day + d.getDay();
+      console.error("Geolocation is not supported by this browser.");
     }
-}
+  }
 
-for (let i = 0; i < 5; i++) {
-    document.getElementById("day" + (i + 1)).innerHTML = weekday[Checkday(i)];
-}
+  function fetchWeatherByCoords(latitude, longitude) {
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+    fetchWeatherData(apiUrl);
+  }
+
+  function fetchWeather(cityName) {
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`;
+    fetchWeatherData(apiUrl);
+  }
+
+  function fetchWeatherData(apiUrl) {
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("City not found");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        updateWeather(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching weather data:", error);
+        clearWeather();
+      });
+  }
+
+  function updateWeather(data) {
+    const city = data.name;
+    const currentTemperature = data.main.temp;
+    const weatherDescription = data.weather[0].description;
+    const iconCode = data.weather[0].icon;
+
+    cityName.textContent = city;
+    temperature.textContent = `${currentTemperature.toFixed(1)}°C`;
+
+    const iconElement = document.createElement("i");
+    iconElement.classList.add("mi", "mi-fw", "mi-lg", `mi-${getIconName(iconCode)}`);
+    const descriptionElement = document.createElement("p");
+    descriptionElement.classList.add("h3");
+    descriptionElement.innerHTML = `${getWeatherDescription(weatherDescription)}`;
+
+    cityName.appendChild(descriptionElement);
+    cityName.appendChild(iconElement);
+  }
+
+  function clearWeather() {
+    cityName.textContent = "";
+    temperature.textContent = "";
+    forecastList.innerHTML = "";
+  }
+
+  function getIconName(iconCode) {
+    // Mapping of OpenWeatherMap icon codes to Meteocons icon names
+    const iconMap = {
+      "01d": "sun",
+      "02d": "cloud-sun",
+      "03d": "cloud",
+      "04d": "clouds",
+      "09d": "rain",
+      "10d": "rain",
+      "11d": "lightning",
+      "13d": "snow",
+      "50d": "mist",
+      "01n": "moon",
+      "02n": "cloud-moon",
+      "03n": "cloud",
+      "04n": "clouds",
+      "09n": "rain",
+      "10n": "rain",
+      "11n": "lightning",
+      "13n": "snow",
+      "50n": "mist"
+    };
+    return iconMap[iconCode];
+  }
+
+  function getWeatherDescription(description) {
+    // Mapping of OpenWeatherMap weather descriptions to simpler descriptions
+    const descriptionMap = {
+      "clear sky": "Clear sky",
+      "few clouds": "Partly cloudy",
+      "scattered clouds": "Scattered clouds",
+      "broken clouds": "Broken clouds",
+      "overcast clouds": "Overcast",
+      "light rain": "Light rain",
+      "moderate rain": "Rain",
+      "heavy intensity rain": "Heavy rain",
+      "light snow": "Light snow",
+      "snow": "Snow",
+      "light shower snow": "Light snow showers",
+      "shower snow": "Snow showers",
+      "heavy snow": "Heavy snow",
+      "mist": "Mist"
+    };
+    return descriptionMap[description.toLowerCase()] || description;
+  }
+});

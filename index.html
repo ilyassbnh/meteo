@@ -1,137 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live coding</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-    integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-    integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-    crossorigin="anonymous"></script>
-    <script src="scripts.js"></script>
-  <title>meteo</title>
+  <link href="https://tomlutzenberger.github.io/meteocons.css/dist/meteocons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 </head>
-
-<body onload="defaultScreen()">
-  <nav class="navbar bg-body-tertiary">
-    <div class="container-fluid">
-      <a class="navbar-brand">Navbar</a>
-      <form class="d-flex" role="search" onclick="Getinfo()">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="City" id="cityInput">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+<body>
+  <div class="main container">
+    <div class="form-group">
+      <input class="form-control" id="cityInput" style="width: 50%; margin: 25px;" placeholder="Enter the city" type="text">
+      <button id="getLocationBtn">Get My Weather</button>
+      <p id="demo"></p>
     </div>
-  </nav>
-  <table class="preview">
-    <tbody>
-        <tr>
-            <td id="day1"></td>
-            <td id="day1Min"></td>
-            <td id="day1Max"></td>
-        </tr>
-        <tr>
-            <td id="day2"></td>
-            <td id="day2Min"></td>
-            <td id="day2Max"></td>
-        </tr>
-        <tr>
-            <td id="day3"></td>
-            <td id="day3Min"></td>
-            <td id="day3Max"></td>
-        </tr>
-        <tr>
-            <td id="day4"></td>
-            <td id="day4Min"></td>
-            <td id="day4Max"></td>
-        </tr>
-        <tr>
-            <td id="day5"></td>
-            <td id="day5Min"></td>
-            <td id="day5Max"></td>
-        </tr>
-    </tbody>
-</table>
-
-  <div class="frame">
-    <h2 id="cityName">--London--</h2>
-    <div class="moon">
-      <div class="moon-crater1"></div>
-      <div class="moon-crater2"></div>
-    </div>
-    <div class="hill-bg-1"></div>
-    <div class="hill-bg-2"></div>
-    <div class="hill-fg-1"></div>
-    <div class="hill-fg-2"></div>
-    <div class="hill-fg-3"></div>
-
-    <div class="front">
-      <div>
-        <div class="temperature">
-          12°
-        </div>
-        <div class="icons">
-          <i class="fas fa-wind"></i><br /><i class="fas fa-tint"></i>
-        </div>
-        <div>
-          <div class="info">
-            E 7 km/h <br> 87%
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-lg-4 col-lg-offset-4 weather-panel">
+          <div class="col-xs-6">
+            <h2 id="cityName">Lucerne<br><small>May 24, 2024</small></h2>
+            <p class="h3"><i class="mi mi-fw mi-lg"></i></p>
           </div>
-          <table class="preview">
-            <tbody>
-              <tr>
-                <td>Tue</td>
-                <td>21° | 9°</td>
-              </tr>
-              <tr>
-                <td>Wed</td>
-                <td>23° | 10°</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="col-xs-6 text-center">
+            <div class="h1 temperature">
+              <span>12°</span>
+              <br>
+            </div>
+          </div>
+          <div class="col-xs-12">
+            <ul class="list-inline row forecast">
+              <!-- Forecast items will be dynamically added here -->
+            </ul>
+          </div>
         </div>
       </div>
-      <div class="proverb">“Frogs croaking in the lagoon,<br />Means rain will come real soon.”</div>
     </div>
-    <div class="drop-big-1"></div>
-    <div class="drop-big-2"></div>
-    <div class="drop-big-3"></div>
-    <div class="drop-big-4"></div>
-    <div class="drop-big-5"></div>
-    <div class="drop-big-6"></div>
-    <div class="drop-big-7"></div>
-    <div class="drop-big-8"></div>
-    <div class="drop-big-9"></div>
-    <div class="drop-big-10"></div>
-    <div class="drop-medium-1"></div>
-    <div class="drop-medium-2"></div>
-    <div class="drop-medium-3"></div>
-    <div class="drop-medium-4"></div>
-    <div class="drop-medium-5"></div>
-    <div class="drop-medium-6"></div>
-    <div class="drop-medium-7"></div>
-    <div class="drop-medium-8"></div>
-    <div class="drop-medium-9"></div>
-    <div class="drop-medium-10"></div>
-    <div class="drop-small-1"></div>
-    <div class="drop-small-2"></div>
-    <div class="drop-small-3"></div>
-    <div class="drop-small-4"></div>
-    <div class="drop-small-5"></div>
-    <div class="drop-small-6"></div>
-    <div class="drop-small-7"></div>
-    <div class="drop-small-8"></div>
-    <div class="drop-small-9"></div>
-    <div class="drop-small-10"></div>
   </div>
-  
 
+  <!-- JavaScript file -->
+  <script src="scripts.js"></script>
 </body>
-
 </html>
