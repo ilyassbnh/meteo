@@ -34,12 +34,12 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function fetchWeatherByCoords(latitude, longitude) {
-    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+    const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
     fetchWeatherData(apiUrl);
   }
 
   function fetchWeather(cityName) {
-    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`;
+    const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${apiKey}&units=metric`;
     fetchWeatherData(apiUrl);
   }
 
@@ -53,6 +53,7 @@ window.addEventListener("DOMContentLoaded", () => {
       })
       .then((data) => {
         updateWeather(data);
+        updateForecast(data.list);
       })
       .catch((error) => {
         console.error("Error fetching weather data:", error);
@@ -61,22 +62,36 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateWeather(data) {
-    const city = data.name;
-    const currentTemperature = data.main.temp;
-    const weatherDescription = data.weather[0].description;
-    const iconCode = data.weather[0].icon;
+    const city = data.city.name;
+    const currentTemperature = data.list[0].main.temp;
+    const weatherDescription = data.list[0].weather[0].description;
+    const iconCode = data.list[0].weather[0].icon;
 
     cityName.textContent = city;
     temperature.textContent = `${currentTemperature.toFixed(1)}°C`;
+  }
 
-    const iconElement = document.createElement("i");
-    iconElement.classList.add("mi", "mi-fw", "mi-lg", `mi-${getIconName(iconCode)}`);
-    const descriptionElement = document.createElement("p");
-    descriptionElement.classList.add("h3");
-    descriptionElement.innerHTML = `${getWeatherDescription(weatherDescription)}`;
+  function updateForecast(forecastData) {
+    forecastList.innerHTML = ""; // Clear previous forecast items
 
-    cityName.appendChild(descriptionElement);
-    cityName.appendChild(iconElement);
+    // Iterate through forecast data for the next 5 days
+    for (let i = 0; i < 5; i++) {
+      const forecast = forecastData[i * 8]; // Weather forecast for every 3 hours, so we skip 8 entries to get data for each day
+      const date = new Date(forecast.dt * 1000);
+      const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+      const temperatureMin = forecast.main.temp_min.toFixed(1);
+      const temperatureMax = forecast.main.temp_max.toFixed(1);
+      const weatherDescription = forecast.weather[0].description;
+      const iconCode = forecast.weather[0].icon;
+
+      const forecastItem = document.createElement("li");
+      forecastItem.innerHTML = `
+        <h3 class="h5">${weekday}</h3>
+        <p><i class="mi mi-fw mi-2x mi-${getIconName(iconCode)}"></i><br>${temperatureMin}°/${temperatureMax}°</p>
+        <p>${getWeatherDescription(weatherDescription)}</p>
+      `;
+      forecastList.appendChild(forecastItem);
+    }
   }
 
   function clearWeather() {
