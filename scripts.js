@@ -4,6 +4,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const cityName = document.getElementById("cityName");
   const temperature = document.querySelector(".temperature span");
   const forecastList = document.querySelector(".forecast");
+  const mainDiv = document.getElementById("divv");
 
   // Event listener for input change
   cityInput.addEventListener("change", () => {
@@ -63,6 +64,11 @@ window.addEventListener("DOMContentLoaded", () => {
       const currentTemperature = data.list[0].main.temp;
       cityName.textContent = city;
       temperature.textContent = `${currentTemperature.toFixed(0)}°C`;
+      if (currentTemperature < 20) {
+        mainDiv.style.backgroundColor = "gray";
+    } else {
+        mainDiv.style.backgroundColor = "white";
+    }
   }
 
   function updateForecast(forecastData) {
